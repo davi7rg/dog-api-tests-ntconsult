@@ -12,25 +12,7 @@ Automação de testes de API usando Java 21, REST Assured, JUnit 5 e Allure.
 
 ---
 
-## 2. Clonar o repositório
-
-Você pode usar SSH (recomendado se já configurou sua chave pessoal):
-
-```bash
-git clone git@github-personal:davi7rg/dog-api-tests-ntconsult.git
-cd dog-api-tests-ntconsult
-```
-
-Ou HTTPS:
-
-```bash
-git clone https://github.com/davi7rg/dog-api-tests-ntconsult.git
-cd dog-api-tests-ntconsult
-```
-
----
-
-## 3. Executar os testes
+## 2. Executar os testes
 
 ```bash
 mvn clean test
@@ -41,7 +23,7 @@ mvn clean test
 
 ---
 
-## 4. Gerar e visualizar o relatório Allure
+## 3. Gerar e visualizar o relatório Allure
 
 ```bash
 mvn allure:serve
@@ -53,7 +35,7 @@ mvn allure:serve
 
 ---
 
-## 5. Estrutura do projeto
+## 4. Estrutura do projeto
 
 ```
 dog-api-tests-ntconsult/
@@ -80,9 +62,9 @@ dog-api-tests-ntconsult/
 
 ---
 
-## 6. Configuração do relatório Allure
+## 5. Configuração do relatório Allure
 
-### 6.1 Environment
+### 5.1 Environment
 
 `src/test/resources/allure-results/environment.properties`
 ```properties
@@ -92,7 +74,7 @@ Environment=QA
 Build Version=1.0-SNAPSHOT
 ```
 
-### 6.2 Categories
+### 5.2 Categories
 
 `src/test/resources/allure-results/categories.json`
 ```json
@@ -105,7 +87,7 @@ Build Version=1.0-SNAPSHOT
 ]
 ```
 
-### 6.3 Executor
+### 5.3 Executor
 
 No `pom.xml`, sob o plugin **allure-maven**, há:
 ```xml
@@ -119,7 +101,7 @@ No `pom.xml`, sob o plugin **allure-maven**, há:
 
 ---
 
-## 7. Integração Contínua (GitHub Actions)
+## 6. Integração Contínua (GitHub Actions)
 
 Arquivo `.github/workflows/ci.yml`:
 
@@ -162,15 +144,3 @@ jobs:
           name: allure-report
           path: target/site/allure-maven-plugin
 ```
-
----
-
-## 8. Personalização e Contribuição
-
-1. Edite as classes em `src/test/java` para adicionar novos cenários.  
-2. Atualize as configurações de **environment**, **categories** ou **executor** conforme necessário.  
-3. Abra uma *issue* ou envie um *pull request*!
-
----
-
-> Mantenha seus arquivos sempre em **UTF-8**.
