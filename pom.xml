@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>br.com.ntconsult</groupId>
+  <artifactId>dog-api-tests-ntconsult</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>dog-api-tests-ntconsult</name>
+  <url>https://github.com/NTConsult/dog-api-tests-ntconsult</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+
+    <restassured.version>5.5.5</restassured.version>
+    <junit.jupiter.version>5.11.0</junit.jupiter.version>
+    <hamcrest.version>2.2</hamcrest.version>
+    <allure.version>2.25.0</allure.version>
+    <logback.version>1.4.11</logback.version>
+    <allure.maven.plugin.version>2.15.2</allure.maven.plugin.version>
+  </properties>
+
+  <dependencies>
+    <!-- REST Assured + JSONPath -->
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${restassured.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>json-path</artifactId>
+      <version>${restassured.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- JUnit 5 -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Hamcrest matchers -->
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Allure RestAssured -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-rest-assured</artifactId>
+      <version>${allure.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Allure JUnit5 -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-junit5</artifactId>
+      <version>${allure.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Logback as SLF4J binder -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>allure-results/**</include>
+        </includes>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <!-- Copy custom Allure files before tests run -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>copy-allure-resources</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/allure-results</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/test/resources/allure-results</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Java 21 compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+
+      <!-- Surefire for JUnit5 + Allure results dir -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M7</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <systemPropertyVariables>
+            <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+      <!-- Bind Allure report generation (no more serve warnings) -->
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>${allure.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <id>generate-allure-report</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <executor>
+                <name>NTConsult CI</name>
+                <type>maven</type>
+                <url>https://github.com/NTConsult/dog-api-tests-ntconsult/actions</url>
+                <buildName>${project.version}</buildName>
+                <reportUrl>http://allure-reports.ntconsult.local/dog-api-tests</reportUrl>
+              </executor>
+              <historyDirectory>${project.build.directory}/allure-history</historyDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Suprimindo StackTrace -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M7</version>
+        <configuration>
+          <trimStackTrace>true</trimStackTrace>
+          <reportFormat>brief</reportFormat>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

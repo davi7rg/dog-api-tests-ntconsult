@@ -1,0 +1,22 @@
+[
+  {
+    "name": "❌ Failed Tests",
+    "matchedStatuses": ["failed"]
+  },
+  {
+    "name": "⚠️ Broken Tests",
+    "matchedStatuses": ["broken"]
+  },
+  {
+    "name": "✅ Passed Tests",
+    "matchedStatuses": ["passed"]
+  },
+  {
+    "name": "⏭️ Skipped Tests",
+    "matchedStatuses": ["skipped"]
+  },
+  {
+    "name": "❔ Unknown Tests",
+    "matchedStatuses": ["unknown"]
+  }
+]

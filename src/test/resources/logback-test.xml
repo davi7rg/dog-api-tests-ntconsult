@@ -1,0 +1,8 @@
+<configuration>
+  <!-- Silencia apenas o AllureLifecycle -->
+  <logger name="io.qameta.allure.AllureLifecycle" level="OFF"/>
+  <!-- Padrão WARN para o resto -->
+  <root level="WARN">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>
