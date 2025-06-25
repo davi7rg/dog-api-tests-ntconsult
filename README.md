@@ -43,18 +43,22 @@ dog-api-tests-ntconsult/
 ├─ src/
 │  └─ test/
 │     ├─ java/
-│     │  └─ br/com/ntconsult/api/tests/
-│     │     ├─ core/
-│     │     │   └─ BaseTest.java
-│     │     └─ scenarios/
-│     │         ├─ BreedsListTest.java
-│     │         ├─ BreedImagesTest.java
-│     │         └─ RandomImageTest.java
+│     │  └─ br/
+│     │     └─ com/
+│     │        └─ ntconsult/
+│     │           ├─ core/
+│     │           │   └─ BaseTest.java
+│     │           └─ api/
+│     │              └─ tests/
+│     │                 └─ scenarios/
+│     │                    ├─ BreedsListTest.java
+│     │                    ├─ BreedImagesTest.java
+│     │                    └─ RandomImageTest.java
 │     └─ resources/
-│         ├─ allure-results/
-│         │   ├─ environment.properties
-│         │   ├─ categories.json
-│         │   └─ logback-test.xml
+│        └─ allure-results/
+│           ├─ environment.properties
+│           ├─ categories.json
+│           └─ logback-test.xml
 ├─ .gitignore
 ├─ pom.xml
 └─ README.md
