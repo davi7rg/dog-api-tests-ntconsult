@@ -1,64 +1,90 @@
 # dog-api-tests-ntconsult
 
-Automação de testes de API usando **Java 21**, **REST Assured**, **JUnit 5** e **Allure**.
+Automação de testes de API usando Java 21, REST Assured, JUnit 5 e Allure.
 
 ---
 
 ## 1. Pré-requisitos
 
-- **Java 21+** instalado e configurado no `PATH`  
-- **Maven CLI ≥ 3.9** instalado  
-- Internet para acessar a API pública [Dog CEO](https://dog.ceo)  
+- **Java 21+** instalado e no `PATH`  
+- **Maven 3.9+** instalado  
+- Acesso à internet (API pública [Dog CEO](https://dog.ceo))
 
 ---
 
-## 2. Como executar
+## 2. Clonar o repositório
 
-1. **Clone o repositório**  
-   ```bash
-   git clone https://github.com/NTConsult/dog-api-tests-ntconsult.git
-   cd dog-api-tests-ntconsult
-   ```
+Você pode usar SSH (recomendado se já configurou sua chave pessoal):
 
-2. **Rode os testes** e gere os arquivos de resultado  
-   ```bash
-   mvn clean test
-   ```
+```bash
+git clone git@github-personal:davi7rg/dog-api-tests-ntconsult.git
+cd dog-api-tests-ntconsult
+```
 
-3. **Abra o relatório interativo**  
-   ```bash
-   mvn allure:serve
-   ```
-   O dashboard Allure ficará disponível em `http://localhost:…` até você interromper com `Ctrl+C`.
+Ou HTTPS:
+
+```bash
+git clone https://github.com/davi7rg/dog-api-tests-ntconsult.git
+cd dog-api-tests-ntconsult
+```
 
 ---
 
-## 3. Estrutura de pastas
+## 3. Executar os testes
+
+```bash
+mvn clean test
+```
+
+- Os resultados brutos ficam em `target/surefire-reports`  
+- Os arquivos Allure (JSON, attachments etc.) em `src/test/resources/allure-results`
+
+---
+
+## 4. Gerar e visualizar o relatório Allure
+
+```bash
+mvn allure:serve
+```
+
+- Inicia um servidor local  
+- Abra o link mostrado no console  
+- Pare com `Ctrl+C`
+
+---
+
+## 5. Estrutura do projeto
 
 ```
 dog-api-tests-ntconsult/
+├─ .github/workflows/ci.yml
+├─ src/
+│  └─ test/
+│     ├─ java/
+│     │  └─ br/com/ntconsult/api/tests/
+│     │     ├─ core/
+│     │     │   └─ BaseTest.java
+│     │     └─ scenarios/
+│     │         ├─ BreedsListTest.java
+│     │         ├─ BreedImagesTest.java
+│     │         └─ RandomImageTest.java
+│     └─ resources/
+│         ├─ allure-results/
+│         │   ├─ environment.properties
+│         │   ├─ categories.json
+│         │   └─ logback-test.xml
+├─ .gitignore
 ├─ pom.xml
-├─ README.md
-└─ src
-   ├─ main/java           ← vazio (projeto só de testes)
-   └─ test
-      ├─ java
-      │   └─ br/com/ntconsult/api/tests
-      │       ├─ core         ← BaseTest
-      │       └─ scenarios    ← BreedsListTest, BreedImagesTest, RandomImageTest
-      └─ resources
-          └─ allure-results   ←
-              ├─ environment.properties
-              ├─ categories.json
+└─ README.md
 ```
 
 ---
 
-## 4. Personalização do relatório Allure
+## 6. Configuração do relatório Allure
 
-### Environment  
-Definido em `src/test/resources/allure-results/environment.properties`:
+### 6.1 Environment
 
+`src/test/resources/allure-results/environment.properties`
 ```properties
 API Base URI=https://dog.ceo/api
 Tested By=Davi Rodrigues
@@ -66,52 +92,36 @@ Environment=QA
 Build Version=1.0-SNAPSHOT
 ```
 
-### Categories  
-Definido em `src/test/resources/allure-results/categories.json`:
+### 6.2 Categories
 
-```jsonc
+`src/test/resources/allure-results/categories.json`
+```json
 [
-  {
-    "name": "Client Errors",
-    "match": [
-      { "status": "failed", "message": ".*404.*" },
-      { "status": "failed", "message": ".*400.*" }
-    ]
-  },
-  {
-    "name": "Server Errors",
-    "match": [
-      { "status": "failed", "message": ".*500.*" }
-    ]
-  }
+  { "name": "❌ Failed Tests",   "matchedStatuses": ["failed"] },
+  { "name": "⚠️ Broken Tests",   "matchedStatuses": ["broken"] },
+  { "name": "✅ Passed Tests",   "matchedStatuses": ["passed"] },
+  { "name": "⏭️ Skipped Tests",  "matchedStatuses": ["skipped"] },
+  { "name": "❔ Unknown Tests",  "matchedStatuses": ["unknown"] }
 ]
 ```
 
-### Executors  
-Definido em `src/test/resources/allure-results/executor.json` *ou* gerado pelo plugin:
+### 6.3 Executor
 
-```json
-{
-  "name": "NTConsult CI",
-  "type": "maven",
-  "url": "https://github.com/NTConsult/dog-api-tests-ntconsult/actions",
-  "buildName": "1.0-SNAPSHOT",
-  "reportUrl": "http://allure-reports.ntconsult.local/dog-api-tests"
-}
-```
-
-### Trend (histórico)  
-Para habilitar a aba **Trend**, configure no POM:
+No `pom.xml`, sob o plugin **allure-maven**, há:
 ```xml
-<historyDirectory>${project.build.directory}/allure-history</historyDirectory>
+<configuration>
+  <executor>
+    <name>Davi Rodrigues</name>
+    <type>maven</type>
+  </executor>
+</configuration>
 ```
-e mantenha `allure-history` entre execuções (por exemplo, como artefato no CI).
 
 ---
 
-## 5. Integração Contínua (GitHub Actions)
+## 7. Integração Contínua (GitHub Actions)
 
-Crie o arquivo `.github/workflows/ci.yml` com:
+Arquivo `.github/workflows/ci.yml`:
 
 ```yaml
 name: CI
@@ -139,8 +149,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
 
       - name: Run tests
         run: mvn clean test
@@ -155,8 +163,14 @@ jobs:
           path: target/site/allure-maven-plugin
 ```
 
-Em cada push ou pull request seus testes serão executados, o relatório será gerado e armazenado como artefato.
+---
+
+## 8. Personalização e Contribuição
+
+1. Edite as classes em `src/test/java` para adicionar novos cenários.  
+2. Atualize as configurações de **environment**, **categories** ou **executor** conforme necessário.  
+3. Abra uma *issue* ou envie um *pull request*!
 
 ---
 
-> **Dica:** mantenha sempre seus arquivos em UTF-8 e utilize _Unicode escapes_ em `.properties` para caracteres especiais, se necessário.
+> Mantenha seus arquivos sempre em **UTF-8**.
